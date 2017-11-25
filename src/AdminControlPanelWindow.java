@@ -34,17 +34,21 @@ public class AdminControlPanelWindow extends JFrame implements AdminPanel{
     }
     private JButton addGroup;
     private JButton addUser;
+    private JButton addVerification; 
     private JButton seeUserPanel;
     private JButton seeNumUser;
     private JButton seeNumGroup;
     private JButton seeNumMessage;
     private JButton seePercentage;
+    private JButton seeLastUpdate; 
     private JPanel panel;
     private JPanel treePanel;
     private JPanel userPanel;
     private JPanel groupPanel;
+    private JPanel verificationPanel;
     private JTextField groupID;
     private JTextField userID;
+    private JTextField verification; 
     private TreeImplementation treeImplementation;
     
     public TreeImplementation getTreeImplementation() {
@@ -58,6 +62,10 @@ public class AdminControlPanelWindow extends JFrame implements AdminPanel{
 
     public JButton getAddUser() {
         return addUser;
+    }
+
+    private JButton getAddVerification(){ 
+    	return addVerification; 
     }
 
     public JButton getSeeUserPanel() {
@@ -79,17 +87,31 @@ public class AdminControlPanelWindow extends JFrame implements AdminPanel{
     public JButton getSeePercentage() {
         return seePercentage;
     }
+    
+    public JButton getSeeLastUpdate() {
+        return seeLastUpdate;
+    }
 
     public JPanel getGroupPanel() {
         return groupPanel;
     }
-
+    
+    public JPanel getVerificationPanel(){ 
+    	return verificationPanel;
+    }
+    
     public JTextField getGroupID() {
         return groupID;
     }
 
     public JTextField getUserID() {
         return userID;
+    }
+    
+    public JTextField getVerification(){
+		return verification;
+		 
+    	
     }
     private AdminControlPanelWindow(){
         createPanel();
@@ -101,20 +123,30 @@ public class AdminControlPanelWindow extends JFrame implements AdminPanel{
     private void createTextArea() {
         userPanel=new JPanel();
         userPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "User ID", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-        userPanel.setBounds(300, 130, 230, 70);
+        userPanel.setBounds(300, 110, 230, 70);
         panel.add(userPanel);
         userPanel.setLayout(null);
         userID = new JTextField();
         userID.setBounds(10, 15, 210, 50);
         userPanel.add(userID);
+        
         groupPanel=new JPanel();
         groupPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Group ID", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-        groupPanel.setBounds(300, 30, 230, 70);
+        groupPanel.setBounds(300, 20, 230, 70);
         panel.add(groupPanel);
         groupPanel.setLayout(null);
         groupID = new JTextField();
         groupID.setBounds(10, 15, 210, 50);
         groupPanel.add(groupID);
+       
+        verificationPanel=new JPanel();
+        verificationPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Verification", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+        verificationPanel.setBounds(300, 200, 230, 70);
+        panel.add(verificationPanel);
+        verificationPanel.setLayout(null);
+        verification = new JTextField();
+        verification.setBounds(10, 15, 210, 50);
+        verificationPanel.add(verification);
         
     }
     private void createPanel(){
@@ -154,17 +186,22 @@ public class AdminControlPanelWindow extends JFrame implements AdminPanel{
         addUser = new JButton("Add User");
         Handler handler = new Handler();
         addUser.addActionListener((ActionListener) handler);
-        addUser.setBounds(540, 135, 170, 70);
+        addUser.setBounds(540, 110, 170, 70);
         panel.add(addUser);
 
         addGroup=new JButton("Add Group");
         addGroup.addActionListener((ActionListener) handler);
-        addGroup.setBounds(540, 34, 170, 70);
+        addGroup.setBounds(540, 20, 170, 70);
         panel.add(addGroup);
-  
+        
+        addVerification=new JButton("Verfication");
+        addVerification.addActionListener((ActionListener) handler);
+        addVerification.setBounds(540, 200, 170, 70);
+        panel.add(addVerification);
+        
         seeUserPanel=new JButton("Open User View");
         seeUserPanel.addActionListener((ActionListener) handler);
-        seeUserPanel.setBounds(300, 245, 384, 70);
+        seeUserPanel.setBounds(300, 280, 384, 70);
         panel.add(seeUserPanel);
     
         seeNumUser=new JButton("Show User Total");
@@ -186,6 +223,12 @@ public class AdminControlPanelWindow extends JFrame implements AdminPanel{
         seePercentage.addActionListener(handler);
         seePercentage.setBounds(540, 460, 170, 70);
         panel.add(seePercentage);
+        
+        
+        seeLastUpdate=new JButton("Last Updated User");
+        seeLastUpdate.addActionListener(handler);
+        seeLastUpdate.setBounds(300, 620, 170, 70);
+        panel.add(seeLastUpdate);
     }
     @Override
     public void setIcon() {
@@ -236,7 +279,7 @@ public class AdminControlPanelWindow extends JFrame implements AdminPanel{
         public void actionPerformed(ActionEvent e) {
             TwitterUser selectedNode=getUser(AdminControlPanelWindow.getInstance().getTree());
             
-            if (e.getSource()==getAddGroup()){
+            if (e.getSource()==getAddGroup() ){
                 String groupId=groupID.getText().trim();
                 TwitterUser newUserGroup=new UserGroup(groupId);
                 if(groupId.isEmpty())
@@ -260,8 +303,22 @@ public class AdminControlPanelWindow extends JFrame implements AdminPanel{
                 else {
                     return;
                 }
+                
             }
-            
+           
+            else if (e.getSource() == getAddVerification()){ 
+                     String Id= verification.getText().trim();
+                     TwitterUser newUserGroup=new UserGroup(Id);
+                     if(Id.isEmpty())
+                         return;
+                     if(treeImplementation.unique(selectedNode,newUserGroup)){
+                         tree.scrollPathToVisible(new TreePath(newUserGroup.getPath()));
+                     }
+                     else {
+                         return;
+                     }
+                 }
+    
             else if (e.getSource()==AdminControlPanelWindow.getInstance().getSeeUserPanel()){
                 OpenUserView(selectedNode);
             }
@@ -290,6 +347,12 @@ public class AdminControlPanelWindow extends JFrame implements AdminPanel{
                     PositiveMessages words= new PositiveMessages();
                     treeImplementation.invite(words);
                     p.infoBox(words.getPercent(),"Percent of Positive Words" );
+                }
+                else if(e.getSource() == AdminControlPanelWindow.getInstance().getSeeLastUpdate()){ 
+                	User lastUpdate = new User(userID.getText().trim()); 
+                	System.out.println("Last Updated User " + lastUpdate);
+                	
+                   
                 }
             }
             

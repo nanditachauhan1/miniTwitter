@@ -26,15 +26,34 @@ public class TreeImplementation implements Host, TreeDataStructure{
             System.out.println("already exists, error");
             return false;
         }
+        if(child.getID().contains(" ")){ 
+        	System.out.println("Cannot have space in user string");
+            return false;
+        }
         if (parent instanceof User){
             System.out.println("User can't have other TwitterUsers in them");
             return false;
         }
         data.put(child.getID(), child);
         tree.insertNodeInto(child, parent, parent.getChildCount());
+        long creationTime = System.currentTimeMillis();
+        System.out.println("Creation Time of " + child.getID() + ": "+ creationTime + " ms");
         return true;
     }
     
+    public boolean unique(TwitterUser parent, TwitterUser child){ 
+    	if (contains(child.getID())){
+            System.out.println("User already exists, error");
+            return false;
+        }else if(child.getID().contains(" ")){ 
+        	System.out.println("Cannot have space in user string");
+            return false;
+        }
+    	else{
+        	System.out.println("User does not exist");
+        	return true; 
+        }
+    }
     @Override
     public boolean contains(String userID) {
         // TODO Auto-generated method stub

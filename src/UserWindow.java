@@ -115,6 +115,8 @@ public class UserWindow extends JFrame implements UserPanel{
 		addTweet.setBounds(322, 188, 125, 36);
 		addTweet.addActionListener((ActionListener) handler);
 		getContentPane().add(addTweet);
+		long lastUpdateTime = System.currentTimeMillis(); 
+		System.out.println("Last Update Time: " + lastUpdateTime + " ms");
 
 
 		follow = new JButton("Follow User");
